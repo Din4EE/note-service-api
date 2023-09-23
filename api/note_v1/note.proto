@@ -2,14 +2,24 @@ syntax = "proto3";
 
 package api.note_v1;
 
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
 option go_package = "github.com/Din4EE/note-service-api/pkg/note_v1";
 
 service NoteService {
   rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
   rpc GetNote(GetNoteRequest) returns (GetNoteResponse);
   rpc GetListNote(GetListNoteRequest) returns (GetListNoteResponse);
-  rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
-  rpc DeleteNote(DeleteNoteRequest) returns (DeleteNoteResponse);
+  rpc UpdateNote(UpdateNoteRequest) returns (google.protobuf.Empty);
+  rpc DeleteNote(DeleteNoteRequest) returns (google.protobuf.Empty);
+}
+
+message Note {
+  string id = 1;
+  string title = 2;
+  string text = 3;
+  string author = 4;
 }
 
 message CreateNoteRequest {
@@ -24,14 +34,10 @@ message CreateNoteResponse {
 
 message GetNoteRequest {
   string id = 1;
-  string status = 2;
 }
 
 message GetNoteResponse {
-  string id = 1;
-  string title = 2;
-  string text = 3;
-  string author = 4;
+  Note note = 1;
 }
 
 message GetListNoteRequest {
@@ -41,29 +47,17 @@ message GetListNoteRequest {
 }
 
 message GetListNoteResponse {
-  repeated string ids = 1;
-  repeated string titles = 2;
-  repeated string texts = 3;
-  repeated string authors = 4;
+  repeated Note notes = 1;
   int64 total_count = 5;
 }
 
 message UpdateNoteRequest {
   string id = 1;
-  string title = 2;
-  string text = 3;
-  string author = 4;
-}
-
-message UpdateNoteResponse {
-  string id = 1;
-  string status = 2;
+  google.protobuf.StringValue title = 2;
+  google.protobuf.StringValue text = 3;
+  google.protobuf.StringValue author = 4;
 }
 
 message DeleteNoteRequest {
   string id = 1;
-}
-
-message DeleteNoteResponse {
-  string status = 2;
 }

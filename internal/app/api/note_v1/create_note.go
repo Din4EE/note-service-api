@@ -8,15 +8,15 @@ import (
 )
 
 func (n *Note) CreateNote(ctx context.Context, res *desc.CreateNoteRequest) (*desc.CreateNoteResponse, error) {
-	newNote := repo.Note{
+	id, err := n.repo.Create(repo.Note{
 		Title:  res.GetTitle(),
 		Text:   res.GetText(),
 		Author: res.GetAuthor(),
-	}
-	id, err := n.repo.Create(newNote)
+	})
 	if err != nil {
 		return nil, err
 	}
+
 	return &desc.CreateNoteResponse{
 		Id: id,
 	}, nil
