@@ -11,17 +11,22 @@ func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	var ids, titles, texts, authors []string
+
+	var protoNotes []*desc.Note
 	for _, note := range notes {
-		ids = append(ids, note.ID)
-		titles = append(titles, note.Title)
-		texts = append(texts, note.Text)
-		authors = append(authors, note.Author)
+		protoNote := &desc.Note{
+			Id:     note.ID,
+			Title:  note.Title,
+			Text:   note.Text,
+			Author: note.Author,
+		}
+		protoNotes = append(protoNotes, protoNote)
 	}
+
+	totalCount := int64(len(notes))
+
 	return &desc.GetListNoteResponse{
-		Ids:     ids,
-		Titles:  titles,
-		Texts:   texts,
-		Authors: authors,
+		Notes:      protoNotes,
+		TotalCount: totalCount,
 	}, nil
 }

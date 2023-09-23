@@ -19,18 +19,23 @@ func main() {
 	client := desc.NewNoteServiceClient(connect)
 	//res, err := client.CreateNote(
 	//	context.Background(), &desc.CreateNoteRequest{
-	//		Title:  "lol",
-	//		Text:   "kek",
-	//		Author: "superpuper",
+	//		Title:  "lol223",
+	//		Text:   "kek444",
+	//		Author: "superduper",
 	//	})
 	//if err != nil {
 	//	log.Println(err.Error())
 	//} else {
 	//	log.Println(res.GetId())
 	//}
-	//res, err := client.DeleteNote(context.Background(), &desc.DeleteNoteRequest{
-	//	Id: "50298619-bc7a-4434-8f70-e0cb72102bd8",
-	//})
+	res, err := client.DeleteNote(context.Background(), &desc.DeleteNoteRequest{
+		Id: "16a8bf86-9196-4be1-8b4f-af25d589cf91",
+	})
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Println(res)
+	}
 	//resGetList, err := client.GetListNote(context.Background(), &desc.GetListNoteRequest{
 	//	Limit:       100,
 	//	Offset:      0,
@@ -39,17 +44,15 @@ func main() {
 	//if err != nil {
 	//	log.Println(err.Error())
 	//} else {
-	//	log.Println(resGetList.GetIds())
+	//	log.Printf("Notes: %v \nTotal Count: %d", resGetList.GetNotes(), resGetList.GetTotalCount())
 	//}
-	resUpdate, err := client.UpdateNote(context.Background(), &desc.UpdateNoteRequest{
-		Id:     "d5753100-0e21-48de-873f-dd4aefa3fb55",
-		Title:  "lol",
-		Text:   "kek",
-		Author: "cheburek",
-	})
-	if err != nil {
-		log.Println(err.Error())
-	} else {
-		log.Println(resUpdate.GetStatus())
-	}
+	//resUpdate, err := client.UpdateNote(context.Background(), &desc.UpdateNoteRequest{
+	//	Id:    "16a8bf86-9196-4be1-8b4f-af25d589cf91",
+	//	Title: wrapperspb.String("lol1"),
+	//})
+	//if err != nil {
+	//	log.Println(err.Error())
+	//} else {
+	//	log.Println(resUpdate)
+	//}
 }
