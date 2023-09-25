@@ -8,8 +8,7 @@ import (
 )
 
 func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (empty *emptypb.Empty, err error) {
-	id := req.GetId()
-	err = n.repo.Delete(id)
+	err = n.repo.Delete(req.GetId())
 	if err != nil {
 		return nil, err
 	}

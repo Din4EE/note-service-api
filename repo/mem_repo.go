@@ -35,25 +35,30 @@ func NewInMemoryNoteRepository() *InMemoryNoteRepository {
 func (r *InMemoryNoteRepository) Create(note Note) (string, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
 	id := uuid.New().String()
 	note.ID = id
 	r.data[id] = note
+
 	return id, nil
 }
 
 func (r *InMemoryNoteRepository) Get(id string) (Note, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
+
 	note, ok := r.data[id]
 	if !ok {
 		return Note{}, fmt.Errorf("note with id %s not found", id)
 	}
+
 	return note, nil
 }
 
 func (r *InMemoryNoteRepository) GetList(limit int64, offset int64, query string) ([]Note, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
+
 	var notes []Note
 	for _, note := range r.data {
 		if strings.Contains(note.Title, query) || strings.Contains(note.Text, query) || strings.Contains(note.Author, query) {
@@ -75,26 +80,45 @@ func (r *InMemoryNoteRepository) GetList(limit int64, offset int64, query string
 func (r *InMemoryNoteRepository) Update(id string, note Note) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	_, ok := r.data[id]
+
+	noteData, ok := r.data[id]
 	if !ok {
 		return fmt.Errorf("note with id %s not found", id)
 	}
-	note.ID = id
-	r.data[id] = note
+
+	if note.Title != "" {
+		noteData.Title = note.Title
+	}
+	if note.Text != "" {
+		noteData.Text = note.Text
+	}
+	if note.Author != "" {
+		noteData.Author = note.Author
+	}
+
+	r.data[id] = noteData
+
+	return nil
+
 	return nil
 }
 
 func (r *InMemoryNoteRepository) Delete(id string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
 	_, exists := r.data[id]
 	if !exists {
 		return fmt.Errorf("note with id %s not found", id)
 	}
 	delete(r.data, id)
+
 	return nil
 }
 
 func (r *InMemoryNoteRepository) GetCurrentStatus() map[string]Note {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
 	return r.data
 }
