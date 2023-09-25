@@ -6,7 +6,6 @@ import (
 
 	desc "github.com/Din4EE/note-service-api/pkg/note_v1"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const addr = "localhost:50051"
@@ -37,23 +36,24 @@ func main() {
 	//} else {
 	//	log.Println(res)
 	//}
-	//resGetList, err := client.GetListNote(context.Background(), &desc.GetListNoteRequest{
-	//	Limit:       100,
-	//	Offset:      0,
-	//	SearchQuery: "super",
-	//})
-	//if err != nil {
-	//	log.Println(err.Error())
-	//} else {
-	//	log.Printf("Notes: %v \nTotal Count: %d", resGetList.GetNotes(), resGetList.GetTotalCount())
-	//}
 	resUpdate, err := client.UpdateNote(context.Background(), &desc.UpdateNoteRequest{
-		Id:    res.GetId(),
-		Title: wrapperspb.String("lol1"),
+		Id:     res.GetId(),
+		Title:  nil,
+		Author: nil,
 	})
 	if err != nil {
 		log.Println(err.Error())
 	} else {
 		log.Println(resUpdate)
+	}
+
+	resGetList, err := client.GetListNote(context.Background(), &desc.GetListNoteRequest{
+		Limit:  100,
+		Offset: 0,
+	})
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Printf("Notes: %v", resGetList.GetNotes())
 	}
 }
