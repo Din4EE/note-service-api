@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"log"
 	"net"
 
@@ -22,12 +20,7 @@ func main() {
 
 	r := repo.NewInMemoryNoteRepository()
 	noteService := note_v1.NewNote(r)
-	s := grpc.NewServer(grpc.UnaryInterceptor(func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
-		resp, err = handler(ctx, req)
-		status, _ := json.MarshalIndent(r.GetCurrentStatus(), "", "  ")
-		log.Printf("Current repo state: %s", status)
-		return resp, err
-	}))
+	s := grpc.NewServer()
 	desc.RegisterNoteServiceServer(s, noteService)
 	if err = s.Serve(list); err != nil {
 		log.Fatalf("failed to serve: %s", err.Error())

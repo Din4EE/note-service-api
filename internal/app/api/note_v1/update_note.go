@@ -9,11 +9,18 @@ import (
 )
 
 func (n *Note) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (*emptypb.Empty, error) {
-	err := n.repo.Update(req.GetId(), repo.Note{
-		Title:  req.GetTitle().GetValue(),
-		Author: req.GetAuthor().GetValue(),
-		Text:   req.GetText().GetValue(),
-	})
+
+	var noteUpdate repo.NoteUpdate
+	if req.GetTitle() != nil {
+		noteUpdate.Title = &req.GetTitle().Value
+	}
+	if req.GetText() != nil {
+		noteUpdate.Text = &req.GetText().Value
+	}
+	if req.GetAuthor() != nil {
+		noteUpdate.Author = &req.GetAuthor().Value
+	}
+	err := n.repo.Update(req.GetId(), noteUpdate)
 	if err != nil {
 		return nil, err
 	}

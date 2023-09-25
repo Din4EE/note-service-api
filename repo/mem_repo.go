@@ -15,11 +15,17 @@ type Note struct {
 	Author string
 }
 
+type NoteUpdate struct {
+	Title  *string
+	Text   *string
+	Author *string
+}
+
 type NoteRepository interface {
 	Create(note Note) (string, error)
 	Get(id string) (Note, error)
 	GetList(limit int64, offset int64, query string) ([]Note, error)
-	Update(id string, note Note) error
+	Update(id string, note NoteUpdate) error
 	Delete(id string) error
 }
 
@@ -77,7 +83,7 @@ func (r *InMemoryNoteRepository) GetList(limit int64, offset int64, query string
 	return notes[start:end], nil
 }
 
-func (r *InMemoryNoteRepository) Update(id string, note Note) error {
+func (r *InMemoryNoteRepository) Update(id string, note NoteUpdate) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -86,19 +92,16 @@ func (r *InMemoryNoteRepository) Update(id string, note Note) error {
 		return fmt.Errorf("note with id %s not found", id)
 	}
 
-	if note.Title != "" {
-		noteData.Title = note.Title
+	if note.Title != nil {
+		noteData.Title = *note.Title
 	}
-	if note.Text != "" {
-		noteData.Text = note.Text
+	if note.Text != nil {
+		noteData.Text = *note.Text
 	}
-	if note.Author != "" {
-		noteData.Author = note.Author
+	if note.Author != nil {
+		noteData.Author = *note.Author
 	}
-
 	r.data[id] = noteData
-
-	return nil
 
 	return nil
 }
@@ -107,18 +110,11 @@ func (r *InMemoryNoteRepository) Delete(id string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	_, exists := r.data[id]
-	if !exists {
+	_, ok := r.data[id]
+	if !ok {
 		return fmt.Errorf("note with id %s not found", id)
 	}
 	delete(r.data, id)
 
 	return nil
-}
-
-func (r *InMemoryNoteRepository) GetCurrentStatus() map[string]Note {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-
-	return r.data
 }
