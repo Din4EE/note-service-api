@@ -23,10 +23,7 @@ func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*
 		protoNotes = append(protoNotes, protoNote)
 	}
 
-	totalCount := int64(len(notes))
-
 	return &desc.GetListNoteResponse{
-		Notes:      protoNotes,
-		TotalCount: totalCount,
+		Notes: protoNotes,
 	}, nil
 }

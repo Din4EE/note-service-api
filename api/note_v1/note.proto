@@ -48,7 +48,6 @@ message GetListNoteRequest {
 
 message GetListNoteResponse {
   repeated Note notes = 1;
-  int64 total_count = 5;
 }
 
 message UpdateNoteRequest {
