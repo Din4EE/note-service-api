@@ -6,6 +6,7 @@ import (
 
 	desc "github.com/Din4EE/note-service-api/pkg/note_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const addr = "localhost:50051"
@@ -21,7 +22,7 @@ func main() {
 		context.Background(), &desc.CreateNoteRequest{
 			Title:  "lol223",
 			Text:   "kek444",
-			Author: "superduper",
+			Author: "test_author",
 		})
 	if err != nil {
 		log.Println(err.Error())
@@ -37,9 +38,8 @@ func main() {
 	//	log.Println(res)
 	//}
 	resUpdate, err := client.UpdateNote(context.Background(), &desc.UpdateNoteRequest{
-		Id:     res.GetId(),
-		Title:  nil,
-		Author: nil,
+		Id:    res.GetId(),
+		Title: wrapperspb.String("ffff"),
 	})
 	if err != nil {
 		log.Println(err.Error())
@@ -48,8 +48,9 @@ func main() {
 	}
 
 	resGetList, err := client.GetListNote(context.Background(), &desc.GetListNoteRequest{
-		Limit:  100,
-		Offset: 0,
+		Limit:       100,
+		Offset:      0,
+		SearchQuery: "ffff",
 	})
 	if err != nil {
 		log.Println(err.Error())
