@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/Din4EE/note-service-api/config"
@@ -16,8 +15,7 @@ type PostgresNoteRepository struct {
 }
 
 func NewPostgresNoteRepository(cfg config.PgConfig) *PostgresNoteRepository {
-	dbDsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode)
-	db, err := sqlx.Connect("pgx", dbDsn)
+	db, err := sqlx.Connect("pgx", cfg.DSN)
 	if err != nil {
 		panic(err)
 	}
@@ -27,7 +25,7 @@ func NewPostgresNoteRepository(cfg config.PgConfig) *PostgresNoteRepository {
 	}
 }
 
-func (r *PostgresNoteRepository) Create(note Note) (string, error) {
+func (r *PostgresNoteRepository) Create(ctx context.Context, note Note) (string, error) {
 	builder := sq.Insert("note").
 		PlaceholderFormat(sq.Dollar).
 		Columns("title", "text", "author").
@@ -37,7 +35,7 @@ func (r *PostgresNoteRepository) Create(note Note) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	row, err := r.db.QueryContext(context.Background(), dbQuery, args...)
+	row, err := r.db.QueryContext(ctx, dbQuery, args...)
 	if err != nil {
 		return "", err
 	}
@@ -53,7 +51,7 @@ func (r *PostgresNoteRepository) Create(note Note) (string, error) {
 	return id, nil
 }
 
-func (r *PostgresNoteRepository) Get(id string) (Note, error) {
+func (r *PostgresNoteRepository) Get(ctx context.Context, id string) (Note, error) {
 	builder := sq.Select("id", "title", "text", "author").
 		From("note").
 		Where(sq.Eq{"id": id}).PlaceholderFormat(sq.Dollar)
@@ -61,7 +59,7 @@ func (r *PostgresNoteRepository) Get(id string) (Note, error) {
 	if err != nil {
 		return Note{}, err
 	}
-	row := r.db.QueryRowxContext(context.Background(), dbQuery, args...)
+	row := r.db.QueryRowxContext(ctx, dbQuery, args...)
 
 	var note Note
 	err = row.Scan(&note.ID, &note.Title, &note.Text, &note.Author)
@@ -72,7 +70,7 @@ func (r *PostgresNoteRepository) Get(id string) (Note, error) {
 	return note, nil
 }
 
-func (r *PostgresNoteRepository) GetList(limit int64, offset int64, query string) ([]Note, error) {
+func (r *PostgresNoteRepository) GetList(ctx context.Context, limit int64, offset int64, query string) ([]Note, error) {
 	builder := sq.Select("id", "title", "text", "author").
 		From("note").
 		Where(sq.Or{
@@ -87,7 +85,7 @@ func (r *PostgresNoteRepository) GetList(limit int64, offset int64, query string
 	if err != nil {
 		return nil, err
 	}
-	rows, err := r.db.QueryxContext(context.Background(), dbQuery, args...)
+	rows, err := r.db.QueryxContext(ctx, dbQuery, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +104,7 @@ func (r *PostgresNoteRepository) GetList(limit int64, offset int64, query string
 	return notes, nil
 }
 
-func (r *PostgresNoteRepository) Update(id string, note NoteUpdate) error {
+func (r *PostgresNoteRepository) Update(ctx context.Context, id string, note NoteUpdate) error {
 	builder := sq.Update("note").Where(sq.Eq{"id": id}).Set("updated_at", time.Now()).PlaceholderFormat(sq.Dollar)
 
 	if note.Title != nil {
@@ -123,7 +121,7 @@ func (r *PostgresNoteRepository) Update(id string, note NoteUpdate) error {
 	if err != nil {
 		return err
 	}
-	_, err = r.db.ExecContext(context.Background(), query, args...)
+	_, err = r.db.ExecContext(ctx, query, args...)
 	if err != nil {
 		return err
 	}
@@ -131,13 +129,13 @@ func (r *PostgresNoteRepository) Update(id string, note NoteUpdate) error {
 	return nil
 }
 
-func (r *PostgresNoteRepository) Delete(id string) error {
+func (r *PostgresNoteRepository) Delete(ctx context.Context, id string) error {
 	builder := sq.Delete("note").PlaceholderFormat(sq.Dollar).Where(sq.Eq{"id": id})
 	dbQuery, args, err := builder.ToSql()
 	if err != nil {
 		return err
 	}
-	_, err = r.db.ExecContext(context.Background(), dbQuery, args...)
+	_, err = r.db.ExecContext(ctx, dbQuery, args...)
 	if err != nil {
 		return err
 	}

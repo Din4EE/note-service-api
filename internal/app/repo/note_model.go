@@ -1,5 +1,7 @@
 package repo
 
+import "context"
+
 type Note struct {
 	ID     string
 	Title  string
@@ -14,9 +16,9 @@ type NoteUpdate struct {
 }
 
 type NoteRepository interface {
-	Create(note Note) (string, error)
-	Get(id string) (Note, error)
-	GetList(limit int64, offset int64, query string) ([]Note, error)
-	Update(id string, note NoteUpdate) error
-	Delete(id string) error
+	Create(ctx context.Context, note Note) (string, error)
+	Get(ctx context.Context, id string) (Note, error)
+	GetList(ctx context.Context, limit int64, offset int64, query string) ([]Note, error)
+	Update(ctx context.Context, id string, note NoteUpdate) error
+	Delete(ctx context.Context, id string) error
 }

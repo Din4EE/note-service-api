@@ -20,7 +20,7 @@ func (n *Note) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (*em
 	if req.GetAuthor() != nil {
 		noteUpdate.Author = &req.GetAuthor().Value
 	}
-	err := n.repo.Update(req.GetId(), noteUpdate)
+	err := n.repo.Update(ctx, req.GetId(), noteUpdate)
 	if err != nil {
 		return nil, err
 	}

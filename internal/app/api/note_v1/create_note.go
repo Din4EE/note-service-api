@@ -8,7 +8,7 @@ import (
 )
 
 func (n *Note) CreateNote(ctx context.Context, res *desc.CreateNoteRequest) (*desc.CreateNoteResponse, error) {
-	id, err := n.repo.Create(repo.Note{
+	id, err := n.repo.Create(ctx, repo.Note{
 		Title:  res.GetTitle(),
 		Text:   res.GetText(),
 		Author: res.GetAuthor(),
