@@ -9,15 +9,13 @@ import (
 )
 
 func (s *Service) CreateNote(ctx context.Context, req *desc.CreateNoteRequest) (*desc.CreateNoteResponse, error) {
-
-	serviceNote := &service.Note{
+	repoNote := converter.ServiceNoteToRepoNote(&service.Note{
 		Title:  req.GetTitle(),
 		Text:   req.GetText(),
 		Email:  req.GetEmail(),
 		Author: req.GetAuthor(),
-	}
-
-	repoNote := converter.ServiceNoteToRepoNote(serviceNote)
+	},
+	)
 
 	id, err := s.noteRepo.Create(ctx, repoNote)
 	if err != nil {

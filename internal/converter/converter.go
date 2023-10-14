@@ -7,10 +7,11 @@ import (
 	"github.com/Din4EE/note-service-api/internal/repo"
 	"github.com/Din4EE/note-service-api/internal/service"
 	desc "github.com/Din4EE/note-service-api/pkg/note_v1"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ServiceNoteToRepoNote(serviceNote *service.Note) repo.Note {
-	return repo.Note{
+func ServiceNoteToRepoNote(serviceNote *service.Note) *repo.Note {
+	return &repo.Note{
 		ID:        serviceNote.ID,
 		Title:     sql.NullString{String: serviceNote.Title, Valid: serviceNote.Title != ""},
 		Text:      sql.NullString{String: serviceNote.Text, Valid: serviceNote.Text != ""},
@@ -26,8 +27,8 @@ func ServiceNoteToRepoNote(serviceNote *service.Note) repo.Note {
 	}
 }
 
-func RepoNoteToServiceNote(repoNote *repo.Note) service.Note {
-	return service.Note{
+func RepoNoteToServiceNote(repoNote *repo.Note) *service.Note {
+	return &service.Note{
 		ID:        repoNote.ID,
 		Title:     repoNote.Title.String,
 		Text:      repoNote.Text.String,
@@ -43,11 +44,27 @@ func RepoNoteToServiceNote(repoNote *repo.Note) service.Note {
 	}
 }
 
-func UpdateRequestToRepoNote(req *desc.UpdateNoteRequest) repo.Note {
-	return repo.Note{
+func UpdateRequestToRepoNote(req *desc.UpdateNoteRequest) *repo.Note {
+	return &repo.Note{
 		Title:  sql.NullString{String: req.GetTitle().GetValue(), Valid: req.GetTitle() != nil},
 		Text:   sql.NullString{String: req.GetText().GetValue(), Valid: req.GetText() != nil},
 		Author: sql.NullString{String: req.GetAuthor().GetValue(), Valid: req.GetAuthor() != nil},
 		Email:  sql.NullString{String: req.GetEmail().GetValue(), Valid: req.GetEmail() != nil},
 	}
+}
+
+func ServiceNoteToDescNote(serviceNote *service.Note) *desc.Note {
+	note := &desc.Note{
+		Id:        serviceNote.ID,
+		Title:     serviceNote.Title,
+		Text:      serviceNote.Text,
+		Author:    serviceNote.Author,
+		Email:     serviceNote.Email,
+		CreatedAt: timestamppb.New(serviceNote.CreatedAt),
+	}
+
+	if !serviceNote.UpdatedAt.IsZero() {
+		note.UpdatedAt = timestamppb.New(serviceNote.UpdatedAt)
+	}
+	return note
 }

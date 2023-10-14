@@ -62,7 +62,7 @@ message CreateNoteResponse {
 }
 
 message GetNoteRequest {
-  string id = 1 [(validate.rules).string.pattern = "^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"];
+  string id = 1 [(validate.rules).string.pattern = "^[0-9]+$"];
 }
 
 message GetNoteResponse {
@@ -80,7 +80,7 @@ message GetListNoteResponse {
 }
 
 message UpdateNoteRequest {
-  string id = 1 [(validate.rules).string.pattern = "^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"];
+  string id = 1 [(validate.rules).string.pattern = "^[0-9]+$"];
   google.protobuf.StringValue title = 2 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
   google.protobuf.StringValue text = 3 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
   google.protobuf.StringValue author = 4 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
@@ -88,5 +88,5 @@ message UpdateNoteRequest {
 }
 
 message DeleteNoteRequest {
-  string id = 1 [(validate.rules).string.pattern = "^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"];
+  string id = 1 [(validate.rules).string.pattern = "^[0-9]+$"];
 }

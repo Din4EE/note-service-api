@@ -533,7 +533,7 @@ func (m *GetNoteRequest) validate(all bool) error {
 	if !_GetNoteRequest_Id_Pattern.MatchString(m.GetId()) {
 		err := GetNoteRequestValidationError{
 			field:  "Id",
-			reason: "value does not match regex pattern \"^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"",
+			reason: "value does not match regex pattern \"^[0-9]+$\"",
 		}
 		if !all {
 			return err
@@ -619,7 +619,7 @@ var _ interface {
 	ErrorName() string
 } = GetNoteRequestValidationError{}
 
-var _GetNoteRequest_Id_Pattern = regexp.MustCompile("^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")
+var _GetNoteRequest_Id_Pattern = regexp.MustCompile("^[0-9]+$")
 
 // Validate checks the field values on GetNoteResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -1030,7 +1030,7 @@ func (m *UpdateNoteRequest) validate(all bool) error {
 	if !_UpdateNoteRequest_Id_Pattern.MatchString(m.GetId()) {
 		err := UpdateNoteRequestValidationError{
 			field:  "Id",
-			reason: "value does not match regex pattern \"^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"",
+			reason: "value does not match regex pattern \"^[0-9]+$\"",
 		}
 		if !all {
 			return err
@@ -1229,7 +1229,7 @@ var _ interface {
 	ErrorName() string
 } = UpdateNoteRequestValidationError{}
 
-var _UpdateNoteRequest_Id_Pattern = regexp.MustCompile("^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")
+var _UpdateNoteRequest_Id_Pattern = regexp.MustCompile("^[0-9]+$")
 
 var _UpdateNoteRequest_Title_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]*$")
 
@@ -1262,7 +1262,7 @@ func (m *DeleteNoteRequest) validate(all bool) error {
 	if !_DeleteNoteRequest_Id_Pattern.MatchString(m.GetId()) {
 		err := DeleteNoteRequestValidationError{
 			field:  "Id",
-			reason: "value does not match regex pattern \"^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"",
+			reason: "value does not match regex pattern \"^[0-9]+$\"",
 		}
 		if !all {
 			return err
@@ -1350,4 +1350,4 @@ var _ interface {
 	ErrorName() string
 } = DeleteNoteRequestValidationError{}
 
-var _DeleteNoteRequest_Id_Pattern = regexp.MustCompile("^[0-9]+$|^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")
+var _DeleteNoteRequest_Id_Pattern = regexp.MustCompile("^[0-9]+$")

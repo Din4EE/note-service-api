@@ -17,9 +17,9 @@ type Note struct {
 }
 
 type NoteRepository interface {
-	Create(ctx context.Context, note Note) (string, error)
+	Create(ctx context.Context, note *Note) (string, error)
 	Get(ctx context.Context, id string) (*Note, error)
 	GetList(ctx context.Context, query string, limit int64, offset int64) ([]*Note, error)
-	Update(ctx context.Context, id string, note Note) error
+	Update(ctx context.Context, id string, note *Note) error
 	Delete(ctx context.Context, id string) error
 }
