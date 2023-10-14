@@ -7,11 +7,11 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (empty *emptypb.Empty, err error) {
-	err = n.repo.Delete(ctx, req.GetId())
+func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*emptypb.Empty, error) {
+	res, err := n.noteService.DeleteNote(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	return &emptypb.Empty{}, nil
+	return res, nil
 }

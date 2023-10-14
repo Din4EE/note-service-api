@@ -1,17 +1,17 @@
 package note_v1
 
 import (
-	"github.com/Din4EE/note-service-api/internal/app/repo"
+	"github.com/Din4EE/note-service-api/internal/service/note"
 	desc "github.com/Din4EE/note-service-api/pkg/note_v1"
 )
 
 type Note struct {
-	repo repo.NoteRepository
+	noteService *note.Service
 	desc.UnimplementedNoteServiceServer
 }
 
-func NewNote(repo repo.NoteRepository) *Note {
+func NewNote(noteService *note.Service) *Note {
 	return &Note{
-		repo: repo,
+		noteService: noteService,
 	}
 }
