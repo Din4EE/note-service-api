@@ -5,7 +5,6 @@ import (
 
 	"github.com/Din4EE/note-service-api/internal/converter"
 	desc "github.com/Din4EE/note-service-api/pkg/note_v1"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *Service) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*desc.GetListNoteResponse, error) {
@@ -21,16 +20,7 @@ func (s *Service) GetListNote(ctx context.Context, req *desc.GetListNoteRequest)
 	var protoNotes []*desc.Note
 	for _, repoNote := range repoNotes {
 		serviceNote := converter.RepoNoteToServiceNote(repoNote)
-
-		protoNote := &desc.Note{
-			Id:        serviceNote.ID,
-			Title:     serviceNote.Title,
-			Text:      serviceNote.Text,
-			Author:    serviceNote.Author,
-			Email:     serviceNote.Email,
-			CreatedAt: timestamppb.New(serviceNote.CreatedAt),
-			UpdatedAt: timestamppb.New(serviceNote.UpdatedAt),
-		}
+		protoNote := converter.ServiceNoteToDescNote(serviceNote)
 		protoNotes = append(protoNotes, protoNote)
 	}
 

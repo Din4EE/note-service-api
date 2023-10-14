@@ -25,7 +25,7 @@ func NewPostgresNoteRepository(cfg config.PgConfig) NoteRepository {
 	}
 }
 
-func (r *postgresNoteRepository) Create(ctx context.Context, note Note) (string, error) {
+func (r *postgresNoteRepository) Create(ctx context.Context, note *Note) (string, error) {
 	builder := sq.Insert("note").
 		PlaceholderFormat(sq.Dollar).
 		Columns("title", "text", "author", "email").
@@ -110,20 +110,20 @@ func (r *postgresNoteRepository) GetList(ctx context.Context, query string, limi
 	return notes, nil
 }
 
-func (r *postgresNoteRepository) Update(ctx context.Context, id string, note Note) error {
+func (r *postgresNoteRepository) Update(ctx context.Context, id string, note *Note) error {
 	builder := sq.Update("note").Where(sq.Eq{"id": id}).Set("updated_at", time.Now().UTC()).PlaceholderFormat(sq.Dollar)
 
 	if note.Title.Valid {
-		builder = builder.Set("title", note.Title.String)
+		builder = builder.Set("title", note.Title)
 	}
 	if note.Text.Valid {
-		builder = builder.Set("text", note.Text.String)
+		builder = builder.Set("text", note.Text)
 	}
 	if note.Author.Valid {
-		builder = builder.Set("author", note.Author.String)
+		builder = builder.Set("author", note.Author)
 	}
 	if note.Email.Valid {
-		builder = builder.Set("email", note.Email.String)
+		builder = builder.Set("email", note.Email)
 	}
 
 	query, args, err := builder.ToSql()
