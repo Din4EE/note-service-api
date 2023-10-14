@@ -7,23 +7,10 @@ import (
 )
 
 func (n *Note) GetListNote(ctx context.Context, req *desc.GetListNoteRequest) (*desc.GetListNoteResponse, error) {
-	notes, err := n.repo.GetList(ctx, req.GetLimit(), req.GetOffset(), req.GetSearchQuery())
+	res, err := n.noteService.GetListNote(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	var protoNotes []*desc.Note
-	for _, note := range notes {
-		protoNote := &desc.Note{
-			Id:     note.ID,
-			Title:  note.Title,
-			Text:   note.Text,
-			Author: note.Author,
-		}
-		protoNotes = append(protoNotes, protoNote)
-	}
-
-	return &desc.GetListNoteResponse{
-		Notes: protoNotes,
-	}, nil
+	return res, nil
 }
