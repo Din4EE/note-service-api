@@ -22,7 +22,8 @@ func main() {
 		context.Background(), &desc.CreateNoteRequest{
 			Title:  "lol223",
 			Text:   "kek444",
-			Author: "test_author",
+			Author: "Testoviy Avtor",
+			Email:  "lol@kekovich.lol",
 		})
 	if err != nil {
 		log.Println(err.Error())
@@ -48,8 +49,6 @@ func main() {
 	}
 
 	resGetList, err := client.GetListNote(context.Background(), &desc.GetListNoteRequest{
-		Limit:       100,
-		Offset:      0,
 		SearchQuery: "ffff",
 	})
 	if err != nil {
