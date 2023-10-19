@@ -11,7 +11,7 @@ import (
 
 	"github.com/Din4EE/note-service-api/internal/app/api/note_v1"
 	"github.com/Din4EE/note-service-api/internal/config"
-	"github.com/Din4EE/note-service-api/internal/repo/note"
+	pgRepo "github.com/Din4EE/note-service-api/internal/repo/note"
 	"github.com/Din4EE/note-service-api/internal/service/note"
 	desc "github.com/Din4EE/note-service-api/pkg/note_v1"
 	grpcValidator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
@@ -52,7 +52,7 @@ func startGRPC() error {
 		return err
 	}
 
-	noteService := note.NewService(repo.NewPostgresNoteRepository(config.PgConfig{
+	noteService := note.NewService(pgRepo.NewPostgresNoteRepository(config.PgConfig{
 		DSN: fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 			os.Getenv("POSTGRES_HOST"),
 			os.Getenv("POSTGRES_PORT"),
