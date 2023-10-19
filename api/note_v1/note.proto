@@ -4,59 +4,89 @@ package api.note_v1;
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "envoyproxy/validate/validate.proto";
 
 option go_package = "github.com/Din4EE/note-service-api/pkg/note_v1";
 
 service NoteService {
-  rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
-  rpc GetNote(GetNoteRequest) returns (GetNoteResponse);
-  rpc GetListNote(GetListNoteRequest) returns (GetListNoteResponse);
-  rpc UpdateNote(UpdateNoteRequest) returns (google.protobuf.Empty);
-  rpc DeleteNote(DeleteNoteRequest) returns (google.protobuf.Empty);
+  rpc Create(CreateRequest) returns (CreateResponse){
+    option (google.api.http) = {
+      post: "/v1/notes"
+      body: "*"
+    };
+  }
+  rpc Get(GetRequest) returns (GetResponse){
+    option (google.api.http) = {
+      get: "/v1/notes/{id}"
+    };
+  }
+  rpc GetList(GetListRequest) returns (GetListResponse){
+    option (google.api.http) = {
+      get: "/v1/notes"
+    };
+  }
+  rpc Update(UpdateRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      patch: "/v1/notes/{id}"
+      body: "*"
+    };
+  }
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      delete: "/v1/notes/{id}"
+    };
+  }
 }
 
 message Note {
-  string id = 1;
+  uint64 id = 1;
   string title = 2;
   string text = 3;
   string author = 4;
+  string email = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
 }
 
-message CreateNoteRequest {
-  string title = 1;
-  string text = 2;
-  string author = 3;
+message CreateRequest {
+  string title = 1 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
+  string text = 2 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
+  string author = 3 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
+  string email = 4 [(validate.rules).string.email = true];
 }
 
-message CreateNoteResponse {
-  string id = 1;
+message CreateResponse {
+  uint64 id = 1;
 }
 
-message GetNoteRequest {
-  string id = 1;
+message GetRequest {
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
 }
 
-message GetNoteResponse {
+message GetResponse {
   Note note = 1;
 }
 
-message GetListNoteRequest {
-  int64 limit = 1;
-  int64 offset = 2;
-  string search_query = 3;
+message GetListRequest {
+  uint64 limit = 1;
+  uint64 offset = 2;
+  string search_query = 3 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
 }
 
-message GetListNoteResponse {
+message GetListResponse {
   repeated Note notes = 1;
 }
 
-message UpdateNoteRequest {
-  string id = 1;
-  google.protobuf.StringValue title = 2;
-  google.protobuf.StringValue text = 3;
-  google.protobuf.StringValue author = 4;
+message UpdateRequest {
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+  google.protobuf.StringValue title = 2 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
+  google.protobuf.StringValue text = 3 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
+  google.protobuf.StringValue author = 4 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
+  google.protobuf.StringValue email = 5 [(validate.rules).string.email = true];
 }
 
-message DeleteNoteRequest {
-  string id = 1;
+message DeleteRequest {
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
 }
