@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/Din4EE/note-service-api/internal/config"
+	"github.com/Din4EE/note-service-api/internal/repo"
+	"github.com/Din4EE/note-service-api/internal/repo/model"
 	sq "github.com/Masterminds/squirrel"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
@@ -14,7 +16,7 @@ type postgresNoteRepository struct {
 	db *sqlx.DB
 }
 
-func NewPostgresNoteRepository(cfg config.PgConfig) NoteRepository {
+func NewPostgresNoteRepository(cfg config.PgConfig) repo.NoteRepository {
 	db, err := sqlx.Connect("pgx", cfg.DSN)
 	if err != nil {
 		panic(err)
@@ -25,7 +27,7 @@ func NewPostgresNoteRepository(cfg config.PgConfig) NoteRepository {
 	}
 }
 
-func (r *postgresNoteRepository) Create(ctx context.Context, note *Note) (string, error) {
+func (r *postgresNoteRepository) Create(ctx context.Context, note *model.Note) (uint64, error) {
 	builder := sq.Insert("note").
 		PlaceholderFormat(sq.Dollar).
 		Columns("title", "text", "author", "email").
@@ -34,26 +36,26 @@ func (r *postgresNoteRepository) Create(ctx context.Context, note *Note) (string
 
 	dbQuery, args, err := builder.ToSql()
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
 	row, err := r.db.QueryContext(ctx, dbQuery, args...)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	defer row.Close()
 
 	row.Next()
-	var id string
+	var id uint64
 	err = row.Scan(&id)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
 	return id, nil
 }
 
-func (r *postgresNoteRepository) Get(ctx context.Context, id string) (*Note, error) {
+func (r *postgresNoteRepository) Get(ctx context.Context, id uint64) (*model.Note, error) {
 	builder := sq.Select("id", "title", "text", "author", "email", "created_at", "updated_at").
 		From("note").
 		Where(sq.Eq{"id": id}).PlaceholderFormat(sq.Dollar)
@@ -62,7 +64,7 @@ func (r *postgresNoteRepository) Get(ctx context.Context, id string) (*Note, err
 		return nil, err
 	}
 	row := r.db.QueryRowxContext(ctx, dbQuery, args...)
-	note := &Note{}
+	note := &model.Note{}
 	err = row.Scan(&note.ID, &note.Title, &note.Text, &note.Author, &note.Email, &note.CreatedAt, &note.UpdatedAt)
 	if err != nil {
 		return nil, err
@@ -71,12 +73,13 @@ func (r *postgresNoteRepository) Get(ctx context.Context, id string) (*Note, err
 	return note, nil
 }
 
-func (r *postgresNoteRepository) GetList(ctx context.Context, query string, limit int64, offset int64) ([]*Note, error) {
+func (r *postgresNoteRepository) GetList(ctx context.Context, query string, limit uint64, offset uint64) ([]*model.Note, error) {
 	builder := sq.Select("id", "title", "text", "author", "email", "created_at", "updated_at").
 		From("note").
 		PlaceholderFormat(sq.Dollar).
-		Limit(uint64(limit)).
-		Offset(uint64(offset))
+		Limit(limit).
+		Offset(offset).
+		OrderBy("id asc")
 
 	if query != "" {
 		builder = builder.Where(sq.Or{
@@ -97,9 +100,9 @@ func (r *postgresNoteRepository) GetList(ctx context.Context, query string, limi
 	}
 	defer rows.Close()
 
-	var notes []*Note
+	var notes []*model.Note
 	for rows.Next() {
-		note := &Note{}
+		note := &model.Note{}
 		err = rows.Scan(&note.ID, &note.Title, &note.Text, &note.Author, &note.Email, &note.CreatedAt, &note.UpdatedAt)
 		if err != nil {
 			return nil, err
@@ -110,8 +113,8 @@ func (r *postgresNoteRepository) GetList(ctx context.Context, query string, limi
 	return notes, nil
 }
 
-func (r *postgresNoteRepository) Update(ctx context.Context, id string, note *Note) error {
-	builder := sq.Update("note").Where(sq.Eq{"id": id}).Set("updated_at", time.Now().UTC()).PlaceholderFormat(sq.Dollar)
+func (r *postgresNoteRepository) Update(ctx context.Context, note *model.Note) error {
+	builder := sq.Update("note").Where(sq.Eq{"id": note.ID}).Set("updated_at", time.Now().UTC()).PlaceholderFormat(sq.Dollar)
 
 	if note.Title.Valid {
 		builder = builder.Set("title", note.Title)
@@ -138,7 +141,7 @@ func (r *postgresNoteRepository) Update(ctx context.Context, id string, note *No
 	return nil
 }
 
-func (r *postgresNoteRepository) Delete(ctx context.Context, id string) error {
+func (r *postgresNoteRepository) Delete(ctx context.Context, id uint64) error {
 	builder := sq.Delete("note").PlaceholderFormat(sq.Dollar).Where(sq.Eq{"id": id})
 	dbQuery, args, err := builder.ToSql()
 	if err != nil {

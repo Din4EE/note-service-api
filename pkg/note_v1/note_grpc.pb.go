@@ -20,22 +20,22 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	NoteService_CreateNote_FullMethodName  = "/api.note_v1.NoteService/CreateNote"
-	NoteService_GetNote_FullMethodName     = "/api.note_v1.NoteService/GetNote"
-	NoteService_GetListNote_FullMethodName = "/api.note_v1.NoteService/GetListNote"
-	NoteService_UpdateNote_FullMethodName  = "/api.note_v1.NoteService/UpdateNote"
-	NoteService_DeleteNote_FullMethodName  = "/api.note_v1.NoteService/DeleteNote"
+	NoteService_Create_FullMethodName  = "/api.note_v1.NoteService/Create"
+	NoteService_Get_FullMethodName     = "/api.note_v1.NoteService/Get"
+	NoteService_GetList_FullMethodName = "/api.note_v1.NoteService/GetList"
+	NoteService_Update_FullMethodName  = "/api.note_v1.NoteService/Update"
+	NoteService_Delete_FullMethodName  = "/api.note_v1.NoteService/Delete"
 )
 
 // NoteServiceClient is the client API for NoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NoteServiceClient interface {
-	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
-	GetNote(ctx context.Context, in *GetNoteRequest, opts ...grpc.CallOption) (*GetNoteResponse, error)
-	GetListNote(ctx context.Context, in *GetListNoteRequest, opts ...grpc.CallOption) (*GetListNoteResponse, error)
-	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DeleteNote(ctx context.Context, in *DeleteNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	GetList(ctx context.Context, in *GetListRequest, opts ...grpc.CallOption) (*GetListResponse, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type noteServiceClient struct {
@@ -46,45 +46,45 @@ func NewNoteServiceClient(cc grpc.ClientConnInterface) NoteServiceClient {
 	return &noteServiceClient{cc}
 }
 
-func (c *noteServiceClient) CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error) {
-	out := new(CreateNoteResponse)
-	err := c.cc.Invoke(ctx, NoteService_CreateNote_FullMethodName, in, out, opts...)
+func (c *noteServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
+	out := new(CreateResponse)
+	err := c.cc.Invoke(ctx, NoteService_Create_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *noteServiceClient) GetNote(ctx context.Context, in *GetNoteRequest, opts ...grpc.CallOption) (*GetNoteResponse, error) {
-	out := new(GetNoteResponse)
-	err := c.cc.Invoke(ctx, NoteService_GetNote_FullMethodName, in, out, opts...)
+func (c *noteServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+	out := new(GetResponse)
+	err := c.cc.Invoke(ctx, NoteService_Get_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *noteServiceClient) GetListNote(ctx context.Context, in *GetListNoteRequest, opts ...grpc.CallOption) (*GetListNoteResponse, error) {
-	out := new(GetListNoteResponse)
-	err := c.cc.Invoke(ctx, NoteService_GetListNote_FullMethodName, in, out, opts...)
+func (c *noteServiceClient) GetList(ctx context.Context, in *GetListRequest, opts ...grpc.CallOption) (*GetListResponse, error) {
+	out := new(GetListResponse)
+	err := c.cc.Invoke(ctx, NoteService_GetList_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *noteServiceClient) UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *noteServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, NoteService_UpdateNote_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, NoteService_Update_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *noteServiceClient) DeleteNote(ctx context.Context, in *DeleteNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *noteServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, NoteService_DeleteNote_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, NoteService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,11 +95,11 @@ func (c *noteServiceClient) DeleteNote(ctx context.Context, in *DeleteNoteReques
 // All implementations must embed UnimplementedNoteServiceServer
 // for forward compatibility
 type NoteServiceServer interface {
-	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
-	GetNote(context.Context, *GetNoteRequest) (*GetNoteResponse, error)
-	GetListNote(context.Context, *GetListNoteRequest) (*GetListNoteResponse, error)
-	UpdateNote(context.Context, *UpdateNoteRequest) (*emptypb.Empty, error)
-	DeleteNote(context.Context, *DeleteNoteRequest) (*emptypb.Empty, error)
+	Create(context.Context, *CreateRequest) (*CreateResponse, error)
+	Get(context.Context, *GetRequest) (*GetResponse, error)
+	GetList(context.Context, *GetListRequest) (*GetListResponse, error)
+	Update(context.Context, *UpdateRequest) (*emptypb.Empty, error)
+	Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedNoteServiceServer()
 }
 
@@ -107,20 +107,20 @@ type NoteServiceServer interface {
 type UnimplementedNoteServiceServer struct {
 }
 
-func (UnimplementedNoteServiceServer) CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateNote not implemented")
+func (UnimplementedNoteServiceServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedNoteServiceServer) GetNote(context.Context, *GetNoteRequest) (*GetNoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetNote not implemented")
+func (UnimplementedNoteServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedNoteServiceServer) GetListNote(context.Context, *GetListNoteRequest) (*GetListNoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetListNote not implemented")
+func (UnimplementedNoteServiceServer) GetList(context.Context, *GetListRequest) (*GetListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetList not implemented")
 }
-func (UnimplementedNoteServiceServer) UpdateNote(context.Context, *UpdateNoteRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateNote not implemented")
+func (UnimplementedNoteServiceServer) Update(context.Context, *UpdateRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedNoteServiceServer) DeleteNote(context.Context, *DeleteNoteRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNote not implemented")
+func (UnimplementedNoteServiceServer) Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedNoteServiceServer) mustEmbedUnimplementedNoteServiceServer() {}
 
@@ -135,92 +135,92 @@ func RegisterNoteServiceServer(s grpc.ServiceRegistrar, srv NoteServiceServer) {
 	s.RegisterService(&NoteService_ServiceDesc, srv)
 }
 
-func _NoteService_CreateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateNoteRequest)
+func _NoteService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NoteServiceServer).CreateNote(ctx, in)
+		return srv.(NoteServiceServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NoteService_CreateNote_FullMethodName,
+		FullMethod: NoteService_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoteServiceServer).CreateNote(ctx, req.(*CreateNoteRequest))
+		return srv.(NoteServiceServer).Create(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NoteService_GetNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetNoteRequest)
+func _NoteService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NoteServiceServer).GetNote(ctx, in)
+		return srv.(NoteServiceServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NoteService_GetNote_FullMethodName,
+		FullMethod: NoteService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoteServiceServer).GetNote(ctx, req.(*GetNoteRequest))
+		return srv.(NoteServiceServer).Get(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NoteService_GetListNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetListNoteRequest)
+func _NoteService_GetList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NoteServiceServer).GetListNote(ctx, in)
+		return srv.(NoteServiceServer).GetList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NoteService_GetListNote_FullMethodName,
+		FullMethod: NoteService_GetList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoteServiceServer).GetListNote(ctx, req.(*GetListNoteRequest))
+		return srv.(NoteServiceServer).GetList(ctx, req.(*GetListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NoteService_UpdateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateNoteRequest)
+func _NoteService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NoteServiceServer).UpdateNote(ctx, in)
+		return srv.(NoteServiceServer).Update(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NoteService_UpdateNote_FullMethodName,
+		FullMethod: NoteService_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoteServiceServer).UpdateNote(ctx, req.(*UpdateNoteRequest))
+		return srv.(NoteServiceServer).Update(ctx, req.(*UpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NoteService_DeleteNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteNoteRequest)
+func _NoteService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NoteServiceServer).DeleteNote(ctx, in)
+		return srv.(NoteServiceServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NoteService_DeleteNote_FullMethodName,
+		FullMethod: NoteService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoteServiceServer).DeleteNote(ctx, req.(*DeleteNoteRequest))
+		return srv.(NoteServiceServer).Delete(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -233,24 +233,24 @@ var NoteService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*NoteServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateNote",
-			Handler:    _NoteService_CreateNote_Handler,
+			MethodName: "Create",
+			Handler:    _NoteService_Create_Handler,
 		},
 		{
-			MethodName: "GetNote",
-			Handler:    _NoteService_GetNote_Handler,
+			MethodName: "Get",
+			Handler:    _NoteService_Get_Handler,
 		},
 		{
-			MethodName: "GetListNote",
-			Handler:    _NoteService_GetListNote_Handler,
+			MethodName: "GetList",
+			Handler:    _NoteService_GetList_Handler,
 		},
 		{
-			MethodName: "UpdateNote",
-			Handler:    _NoteService_UpdateNote_Handler,
+			MethodName: "Update",
+			Handler:    _NoteService_Update_Handler,
 		},
 		{
-			MethodName: "DeleteNote",
-			Handler:    _NoteService_DeleteNote_Handler,
+			MethodName: "Delete",
+			Handler:    _NoteService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

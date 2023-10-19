@@ -13,12 +13,12 @@
   "paths": {
     "/v1/notes": {
       "get": {
-        "operationId": "NoteService_GetListNote",
+        "operationId": "NoteService_GetList",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/note_v1GetListNoteResponse"
+              "$ref": "#/definitions/note_v1GetListResponse"
             }
           },
           "default": {
@@ -34,14 +34,14 @@
             "in": "query",
             "required": false,
             "type": "string",
-            "format": "int64"
+            "format": "uint64"
           },
           {
             "name": "offset",
             "in": "query",
             "required": false,
             "type": "string",
-            "format": "int64"
+            "format": "uint64"
           },
           {
             "name": "search_query",
@@ -55,12 +55,12 @@
         ]
       },
       "post": {
-        "operationId": "NoteService_CreateNote",
+        "operationId": "NoteService_Create",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/note_v1CreateNoteResponse"
+              "$ref": "#/definitions/note_v1CreateResponse"
             }
           },
           "default": {
@@ -76,7 +76,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/note_v1CreateNoteRequest"
+              "$ref": "#/definitions/note_v1CreateRequest"
             }
           }
         ],
@@ -87,12 +87,12 @@
     },
     "/v1/notes/{id}": {
       "get": {
-        "operationId": "NoteService_GetNote",
+        "operationId": "NoteService_Get",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/note_v1GetNoteResponse"
+              "$ref": "#/definitions/note_v1GetResponse"
             }
           },
           "default": {
@@ -107,7 +107,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "uint64"
           }
         ],
         "tags": [
@@ -115,7 +116,7 @@
         ]
       },
       "delete": {
-        "operationId": "NoteService_DeleteNote",
+        "operationId": "NoteService_Delete",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -135,7 +136,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "uint64"
           }
         ],
         "tags": [
@@ -143,7 +145,7 @@
         ]
       },
       "patch": {
-        "operationId": "NoteService_UpdateNote",
+        "operationId": "NoteService_Update",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -163,14 +165,15 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "uint64"
           },
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/note_v1UpdateNoteRequest"
+              "$ref": "#/definitions/note_v1UpdateRequest"
             }
           }
         ],
@@ -181,7 +184,7 @@
     }
   },
   "definitions": {
-    "note_v1CreateNoteRequest": {
+    "note_v1CreateRequest": {
       "type": "object",
       "properties": {
         "title": {
@@ -198,15 +201,16 @@
         }
       }
     },
-    "note_v1CreateNoteResponse": {
+    "note_v1CreateResponse": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "uint64"
         }
       }
     },
-    "note_v1GetListNoteResponse": {
+    "note_v1GetListResponse": {
       "type": "object",
       "properties": {
         "notes": {
@@ -217,7 +221,7 @@
         }
       }
     },
-    "note_v1GetNoteResponse": {
+    "note_v1GetResponse": {
       "type": "object",
       "properties": {
         "note": {
@@ -229,7 +233,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "uint64"
         },
         "title": {
           "type": "string"
@@ -253,11 +258,12 @@
         }
       }
     },
-    "note_v1UpdateNoteRequest": {
+    "note_v1UpdateRequest": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "uint64"
         },
         "title": {
           "type": "string"
