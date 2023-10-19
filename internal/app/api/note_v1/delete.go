@@ -1,4 +1,4 @@
-package note
+package note_v1
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *Service) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*emptypb.Empty, error) {
-	err := s.noteRepo.Delete(ctx, req.GetId())
+func (n *Note) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+	err := n.noteService.Delete(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
