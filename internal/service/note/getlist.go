@@ -3,7 +3,6 @@ package note
 import (
 	"context"
 
-	"github.com/Din4EE/note-service-api/internal/repo/converter"
 	"github.com/Din4EE/note-service-api/internal/service/model"
 )
 
@@ -16,15 +15,9 @@ func (s *Service) GetList(ctx context.Context, query string, limit uint64, offse
 		limit = defaultLimit
 	}
 
-	repoNotes, err := s.noteRepo.GetList(ctx, query, limit, offset)
+	notes, err := s.noteRepo.GetList(ctx, query, limit, offset)
 	if err != nil {
 		return nil, err
-	}
-
-	var notes []*model.Note
-	for _, repoNote := range repoNotes {
-		serviceNote := converter.RepoNoteToServiceNote(repoNote)
-		notes = append(notes, serviceNote)
 	}
 
 	return notes, nil

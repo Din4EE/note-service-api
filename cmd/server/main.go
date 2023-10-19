@@ -52,7 +52,7 @@ func startGRPC() error {
 		return err
 	}
 
-	noteService := note.NewService(pgRepo.NewPostgresNoteRepository(config.PgConfig{
+	noteService := note.NewService(pgRepo.NewRepository(config.PgConfig{
 		DSN: fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 			os.Getenv("POSTGRES_HOST"),
 			os.Getenv("POSTGRES_PORT"),

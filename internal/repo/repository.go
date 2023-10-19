@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 
-	"github.com/Din4EE/note-service-api/internal/repo/model"
+	"github.com/Din4EE/note-service-api/internal/service/model"
 )
 
 type NoteRepository interface {
