@@ -8,13 +8,15 @@ import (
 	srvModel "github.com/Din4EE/note-service-api/internal/service/model"
 )
 
-func ServiceNoteToRepoNote(serviceNote *srvModel.Note) *repoModel.Note {
+func ToRepoNote(serviceNote *srvModel.Note) *repoModel.Note {
 	return &repoModel.Note{
-		ID:        serviceNote.ID,
-		Title:     sql.NullString{String: *serviceNote.Title, Valid: *serviceNote.Title != ""},
-		Text:      sql.NullString{String: *serviceNote.Text, Valid: *serviceNote.Text != ""},
-		Author:    sql.NullString{String: *serviceNote.Author, Valid: *serviceNote.Author != ""},
-		Email:     sql.NullString{String: *serviceNote.Email, Valid: *serviceNote.Email != ""},
+		ID: serviceNote.ID,
+		NoteInfo: &repoModel.NoteInfo{
+			Title:  sql.NullString{String: *serviceNote.NoteInfo.Title, Valid: *serviceNote.NoteInfo.Title != ""},
+			Text:   sql.NullString{String: *serviceNote.NoteInfo.Text, Valid: *serviceNote.NoteInfo.Text != ""},
+			Author: sql.NullString{String: *serviceNote.NoteInfo.Author, Valid: *serviceNote.NoteInfo.Author != ""},
+			Email:  sql.NullString{String: *serviceNote.NoteInfo.Email, Valid: *serviceNote.NoteInfo.Email != ""},
+		},
 		CreatedAt: serviceNote.CreatedAt,
 		UpdatedAt: func(time *time.Time) sql.NullTime {
 			if time == nil || time.IsZero() {
@@ -25,13 +27,15 @@ func ServiceNoteToRepoNote(serviceNote *srvModel.Note) *repoModel.Note {
 	}
 }
 
-func RepoNoteToServiceNote(repoNote *repoModel.Note) *srvModel.Note {
+func ToServiceNote(repoNote *repoModel.Note) *srvModel.Note {
 	return &srvModel.Note{
-		ID:        repoNote.ID,
-		Title:     &repoNote.Title.String,
-		Text:      &repoNote.Text.String,
-		Author:    &repoNote.Author.String,
-		Email:     &repoNote.Email.String,
+		ID: repoNote.ID,
+		NoteInfo: &srvModel.NoteInfo{
+			Title:  &repoNote.NoteInfo.Title.String,
+			Text:   &repoNote.NoteInfo.Text.String,
+			Author: &repoNote.NoteInfo.Author.String,
+			Email:  &repoNote.NoteInfo.Email.String,
+		},
 		CreatedAt: repoNote.CreatedAt,
 		UpdatedAt: func(nt sql.NullTime) *time.Time {
 			if !nt.Valid {

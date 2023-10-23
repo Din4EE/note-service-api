@@ -9,12 +9,14 @@ import (
 )
 
 func (n *Note) Update(ctx context.Context, req *desc.UpdateRequest) (*emptypb.Empty, error) {
-	err := n.noteService.Update(ctx, converter.DescNoteToServiceNote(&desc.Note{
-		Id:     req.GetId(),
-		Title:  req.GetTitle().GetValue(),
-		Text:   req.GetText().GetValue(),
-		Author: req.GetAuthor().GetValue(),
-		Email:  req.GetEmail().GetValue(),
+	err := n.noteService.Update(ctx, converter.ToServiceNote(&desc.Note{
+		Id: req.GetId(),
+		Info: &desc.NoteInfo{
+			Title:  req.GetInfo().GetTitle().GetValue(),
+			Text:   req.GetInfo().GetText().GetValue(),
+			Author: req.GetInfo().GetAuthor().GetValue(),
+			Email:  req.GetInfo().GetEmail().GetValue(),
+		},
 	}))
 	if err != nil {
 		return nil, err
