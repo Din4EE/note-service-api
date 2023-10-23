@@ -8,11 +8,13 @@ import (
 )
 
 func (n *Note) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	id, err := n.noteService.Create(ctx, converter.DescNoteToServiceNote(&desc.Note{
-		Title:  req.GetTitle(),
-		Text:   req.GetText(),
-		Author: req.GetAuthor(),
-		Email:  req.GetEmail(),
+	id, err := n.noteService.Create(ctx, converter.ToServiceNote(&desc.Note{
+		Info: &desc.NoteInfo{
+			Title:  req.GetInfo().GetTitle(),
+			Text:   req.GetInfo().GetText(),
+			Author: req.GetInfo().GetAuthor(),
+			Email:  req.GetInfo().GetEmail(),
+		},
 	}))
 	if err != nil {
 		return nil, err

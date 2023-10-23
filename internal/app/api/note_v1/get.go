@@ -14,6 +14,6 @@ func (n *Note) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse
 	}
 
 	return &desc.GetResponse{
-		Note: converter.ServiceNoteToDescNote(note),
+		Note: converter.ToDescNote(note),
 	}, nil
 }

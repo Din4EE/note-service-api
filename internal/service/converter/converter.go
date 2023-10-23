@@ -6,23 +6,27 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func DescNoteToServiceNote(descNote *desc.Note) *model.Note {
+func ToServiceNote(descNote *desc.Note) *model.Note {
 	return &model.Note{
-		ID:     descNote.Id,
-		Title:  &descNote.Title,
-		Text:   &descNote.Text,
-		Author: &descNote.Author,
-		Email:  &descNote.Email,
+		ID: descNote.GetId(),
+		NoteInfo: &model.NoteInfo{
+			Title:  &descNote.GetInfo().Title,
+			Text:   &descNote.GetInfo().Text,
+			Author: &descNote.GetInfo().Author,
+			Email:  &descNote.GetInfo().Email,
+		},
 	}
 }
 
-func ServiceNoteToDescNote(serviceNote *model.Note) *desc.Note {
+func ToDescNote(serviceNote *model.Note) *desc.Note {
 	note := &desc.Note{
-		Id:        serviceNote.ID,
-		Title:     *serviceNote.Title,
-		Text:      *serviceNote.Text,
-		Author:    *serviceNote.Author,
-		Email:     *serviceNote.Email,
+		Id: serviceNote.ID,
+		Info: &desc.NoteInfo{
+			Title:  *serviceNote.NoteInfo.Title,
+			Text:   *serviceNote.NoteInfo.Text,
+			Author: *serviceNote.NoteInfo.Author,
+			Email:  *serviceNote.NoteInfo.Email,
+		},
 		CreatedAt: timestamppb.New(serviceNote.CreatedAt),
 	}
 

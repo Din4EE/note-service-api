@@ -6,11 +6,15 @@ import (
 )
 
 type Note struct {
-	ID        uint64         `db:"id"`
-	Title     sql.NullString `db:"title"`
-	Text      sql.NullString `db:"text"`
-	Author    sql.NullString `db:"author"`
-	Email     sql.NullString `db:"email"`
-	CreatedAt time.Time      `db:"created_at"`
-	UpdatedAt sql.NullTime   `db:"updated_at"`
+	ID        uint64       `db:"id"`
+	NoteInfo  *NoteInfo    `db:""`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+}
+
+type NoteInfo struct {
+	Title  sql.NullString `db:"title"`
+	Text   sql.NullString `db:"text"`
+	Author sql.NullString `db:"author"`
+	Email  sql.NullString `db:"email"`
 }
