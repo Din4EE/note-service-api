@@ -57,10 +57,32 @@ func (m *NoteInfo) validate(all bool) error {
 
 	var errors []error
 
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
+		err := NoteInfoValidationError{
+			field:  "Title",
+			reason: "value length must be between 3 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if !_NoteInfo_Title_Pattern.MatchString(m.GetTitle()) {
 		err := NoteInfoValidationError{
 			field:  "Title",
 			reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]*$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetText()); l < 3 || l > 255 {
+		err := NoteInfoValidationError{
+			field:  "Text",
+			reason: "value length must be between 3 and 255 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -79,10 +101,32 @@ func (m *NoteInfo) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if l := utf8.RuneCountInString(m.GetAuthor()); l < 3 || l > 255 {
+		err := NoteInfoValidationError{
+			field:  "Author",
+			reason: "value length must be between 3 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if !_NoteInfo_Author_Pattern.MatchString(m.GetAuthor()) {
 		err := NoteInfoValidationError{
 			field:  "Author",
 			reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]*$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetEmail()); l < 3 || l > 255 {
+		err := NoteInfoValidationError{
+			field:  "Email",
+			reason: "value length must be between 3 and 255 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -259,10 +303,21 @@ func (m *UpdateNoteInfo) validate(all bool) error {
 
 	if wrapper := m.GetTitle(); wrapper != nil {
 
+		if utf8.RuneCountInString(wrapper.GetValue()) > 255 {
+			err := UpdateNoteInfoValidationError{
+				field:  "Title",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 		if !_UpdateNoteInfo_Title_Pattern.MatchString(wrapper.GetValue()) {
 			err := UpdateNoteInfoValidationError{
 				field:  "Title",
-				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]*$\"",
+				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]$\"",
 			}
 			if !all {
 				return err
@@ -274,10 +329,21 @@ func (m *UpdateNoteInfo) validate(all bool) error {
 
 	if wrapper := m.GetText(); wrapper != nil {
 
+		if utf8.RuneCountInString(wrapper.GetValue()) > 255 {
+			err := UpdateNoteInfoValidationError{
+				field:  "Text",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 		if !_UpdateNoteInfo_Text_Pattern.MatchString(wrapper.GetValue()) {
 			err := UpdateNoteInfoValidationError{
 				field:  "Text",
-				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]*$\"",
+				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]$\"",
 			}
 			if !all {
 				return err
@@ -289,10 +355,21 @@ func (m *UpdateNoteInfo) validate(all bool) error {
 
 	if wrapper := m.GetAuthor(); wrapper != nil {
 
+		if utf8.RuneCountInString(wrapper.GetValue()) > 255 {
+			err := UpdateNoteInfoValidationError{
+				field:  "Author",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 		if !_UpdateNoteInfo_Author_Pattern.MatchString(wrapper.GetValue()) {
 			err := UpdateNoteInfoValidationError{
 				field:  "Author",
-				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]*$\"",
+				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]$\"",
 			}
 			if !all {
 				return err
@@ -303,6 +380,17 @@ func (m *UpdateNoteInfo) validate(all bool) error {
 	}
 
 	if wrapper := m.GetEmail(); wrapper != nil {
+
+		if utf8.RuneCountInString(wrapper.GetValue()) > 255 {
+			err := UpdateNoteInfoValidationError{
+				field:  "Email",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if err := m._validateEmail(wrapper.GetValue()); err != nil {
 			err = UpdateNoteInfoValidationError{
@@ -446,11 +534,11 @@ var _ interface {
 	ErrorName() string
 } = UpdateNoteInfoValidationError{}
 
-var _UpdateNoteInfo_Title_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]*$")
+var _UpdateNoteInfo_Title_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]$")
 
-var _UpdateNoteInfo_Text_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]*$")
+var _UpdateNoteInfo_Text_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]$")
 
-var _UpdateNoteInfo_Author_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]*$")
+var _UpdateNoteInfo_Author_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]$")
 
 // Validate checks the field values on Note with the rules defined in the proto
 // definition for this message. If any rules are violated, the first error
