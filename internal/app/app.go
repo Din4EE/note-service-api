@@ -16,7 +16,7 @@ import (
 )
 
 type App struct {
-	mux             *runtime.ServeMux
+	httpServer      *runtime.ServeMux
 	grpcServer      *grpc.Server
 	noteImpl        *note_v1.Note
 	serviceProvider *serviceProvider
@@ -60,7 +60,7 @@ func (a *App) Run(ctx context.Context) error {
 func (a *App) initDeps(ctx context.Context) error {
 	inits := []func(context.Context) error{
 		a.initServiceProvider,
-		a.initServer,
+		a.initService,
 		a.initGRPCServer,
 		a.initHTTPHandlers,
 	}
@@ -87,16 +87,16 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) initServer(ctx context.Context) error {
+func (a *App) initService(ctx context.Context) error {
 	a.noteImpl = note_v1.NewNote(a.serviceProvider.GetNoteService(ctx))
 
 	return nil
 }
 
 func (a *App) initHTTPHandlers(ctx context.Context) error {
-	a.mux = runtime.NewServeMux()
+	a.httpServer = runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := desc.RegisterNoteServiceHandlerFromEndpoint(ctx, a.mux, net.JoinHostPort(a.serviceProvider.GetConfig().GRPC.Host, a.serviceProvider.GetConfig().GRPC.Port), opts)
+	err := desc.RegisterNoteServiceHandlerFromEndpoint(ctx, a.httpServer, net.JoinHostPort(a.serviceProvider.GetConfig().GRPC.Host, a.serviceProvider.GetConfig().GRPC.Port), opts)
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (a *App) runGRPCServer() error {
 }
 
 func (a *App) runHTTPServer() error {
-	if err := http.ListenAndServe(net.JoinHostPort(a.serviceProvider.GetConfig().HTTP.Host, a.serviceProvider.GetConfig().HTTP.Port), a.mux); err != nil {
+	if err := http.ListenAndServe(net.JoinHostPort(a.serviceProvider.GetConfig().HTTP.Host, a.serviceProvider.GetConfig().HTTP.Port), a.httpServer); err != nil {
 		return err
 	}
 
