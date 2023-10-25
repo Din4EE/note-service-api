@@ -172,9 +172,9 @@ func (a *App) runHTTPServer() error {
 }
 
 func (a *App) stopHTTPServer(ctx context.Context) error {
-	if a.httpServer == nil {
-		return fmt.Errorf("HTTP server is not initialized")
+	if a.httpServer != nil {
+		return a.httpServer.Shutdown(ctx)
 	}
 
-	return a.httpServer.Shutdown(ctx)
+	return nil
 }

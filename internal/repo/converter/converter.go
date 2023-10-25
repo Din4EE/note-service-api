@@ -9,22 +9,32 @@ import (
 )
 
 func ToRepoNote(serviceNote *srvModel.Note) *repoModel.Note {
-	return &repoModel.Note{
-		ID: serviceNote.ID,
-		NoteInfo: &repoModel.NoteInfo{
-			Title:  sql.NullString{String: *serviceNote.NoteInfo.Title, Valid: *serviceNote.NoteInfo.Title != ""},
-			Text:   sql.NullString{String: *serviceNote.NoteInfo.Text, Valid: *serviceNote.NoteInfo.Text != ""},
-			Author: sql.NullString{String: *serviceNote.NoteInfo.Author, Valid: *serviceNote.NoteInfo.Author != ""},
-			Email:  sql.NullString{String: *serviceNote.NoteInfo.Email, Valid: *serviceNote.NoteInfo.Email != ""},
-		},
+	repoNote := &repoModel.Note{
+		ID:        serviceNote.ID,
 		CreatedAt: serviceNote.CreatedAt,
-		UpdatedAt: func(time *time.Time) sql.NullTime {
-			if time == nil || time.IsZero() {
-				return sql.NullTime{}
-			}
-			return sql.NullTime{Time: *time, Valid: true}
-		}(serviceNote.UpdatedAt),
+		NoteInfo:  &repoModel.NoteInfo{},
 	}
+
+	if serviceNote.NoteInfo.Title != nil {
+		repoNote.NoteInfo.Title = sql.NullString{String: *serviceNote.NoteInfo.Title, Valid: *serviceNote.NoteInfo.Title != ""}
+	}
+	if serviceNote.NoteInfo.Text != nil {
+		repoNote.NoteInfo.Text = sql.NullString{String: *serviceNote.NoteInfo.Text, Valid: *serviceNote.NoteInfo.Text != ""}
+	}
+	if serviceNote.NoteInfo.Author != nil {
+		repoNote.NoteInfo.Author = sql.NullString{String: *serviceNote.NoteInfo.Author, Valid: *serviceNote.NoteInfo.Author != ""}
+	}
+	if serviceNote.NoteInfo.Email != nil {
+		repoNote.NoteInfo.Email = sql.NullString{String: *serviceNote.NoteInfo.Email, Valid: *serviceNote.NoteInfo.Email != ""}
+	}
+	repoNote.UpdatedAt = func(time *time.Time) sql.NullTime {
+		if time == nil || time.IsZero() {
+			return sql.NullTime{}
+		}
+		return sql.NullTime{Time: *time, Valid: true}
+	}(serviceNote.UpdatedAt)
+
+	return repoNote
 }
 
 func ToServiceNote(repoNote *repoModel.Note) *srvModel.Note {

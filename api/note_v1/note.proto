@@ -65,15 +65,15 @@ message NoteInfo {
 
 message UpdateNoteInfo {
   google.protobuf.StringValue title = 1 [
-    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]$",
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
     (validate.rules).string.max_len = 255
   ];
   google.protobuf.StringValue text = 2 [
-    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]$",
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
     (validate.rules).string.max_len = 255
   ];
   google.protobuf.StringValue author = 3 [
-    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]$",
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
     (validate.rules).string.max_len = 255
   ];
   google.protobuf.StringValue email = 4 [
@@ -90,7 +90,7 @@ message Note {
 }
 
 message CreateRequest {
-  NoteInfo info = 1;
+  NoteInfo info = 1 [(validate.rules).message.required = true];
 }
 
 message CreateResponse {
@@ -117,7 +117,7 @@ message GetListResponse {
 
 message UpdateRequest {
   uint64 id = 1 [(validate.rules).uint64.gt = 0];
-  UpdateNoteInfo info = 2;
+  UpdateNoteInfo info = 2 [(validate.rules).message.required = true];
 }
 
 message DeleteRequest {

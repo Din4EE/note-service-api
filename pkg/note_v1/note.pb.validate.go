@@ -317,7 +317,7 @@ func (m *UpdateNoteInfo) validate(all bool) error {
 		if !_UpdateNoteInfo_Title_Pattern.MatchString(wrapper.GetValue()) {
 			err := UpdateNoteInfoValidationError{
 				field:  "Title",
-				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]$\"",
+				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]*$\"",
 			}
 			if !all {
 				return err
@@ -343,7 +343,7 @@ func (m *UpdateNoteInfo) validate(all bool) error {
 		if !_UpdateNoteInfo_Text_Pattern.MatchString(wrapper.GetValue()) {
 			err := UpdateNoteInfoValidationError{
 				field:  "Text",
-				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]$\"",
+				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]*$\"",
 			}
 			if !all {
 				return err
@@ -369,7 +369,7 @@ func (m *UpdateNoteInfo) validate(all bool) error {
 		if !_UpdateNoteInfo_Author_Pattern.MatchString(wrapper.GetValue()) {
 			err := UpdateNoteInfoValidationError{
 				field:  "Author",
-				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]$\"",
+				reason: "value does not match regex pattern \"^[a-zA-Z0-9_ ]*$\"",
 			}
 			if !all {
 				return err
@@ -534,11 +534,11 @@ var _ interface {
 	ErrorName() string
 } = UpdateNoteInfoValidationError{}
 
-var _UpdateNoteInfo_Title_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]$")
+var _UpdateNoteInfo_Title_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]*$")
 
-var _UpdateNoteInfo_Text_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]$")
+var _UpdateNoteInfo_Text_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]*$")
 
-var _UpdateNoteInfo_Author_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]$")
+var _UpdateNoteInfo_Author_Pattern = regexp.MustCompile("^[a-zA-Z0-9_ ]*$")
 
 // Validate checks the field values on Note with the rules defined in the proto
 // definition for this message. If any rules are violated, the first error
@@ -748,6 +748,17 @@ func (m *CreateRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetInfo() == nil {
+		err := CreateRequestValidationError{
+			field:  "Info",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetInfo()).(type) {
@@ -1473,6 +1484,17 @@ func (m *UpdateRequest) validate(all bool) error {
 		err := UpdateRequestValidationError{
 			field:  "Id",
 			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetInfo() == nil {
+		err := UpdateRequestValidationError{
+			field:  "Info",
+			reason: "value is required",
 		}
 		if !all {
 			return err
