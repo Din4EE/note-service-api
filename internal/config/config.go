@@ -2,7 +2,6 @@ package config
 
 import (
 	"bytes"
-	"log"
 	"os"
 	"text/template"
 
@@ -35,12 +34,12 @@ func NewConfig(path string) (*Config, error) {
 	config := &Config{}
 	tmpl, err := os.ReadFile(path)
 	if err != nil {
-		log.Fatalf("failed to read config file: %s", err.Error())
+		return nil, err
 	}
 
 	t, err := template.New("config").Parse(string(tmpl))
 	if err != nil {
-		log.Fatalf("failed to parse config file: %s", err.Error())
+		return nil, err
 	}
 
 	env := map[string]string{
@@ -53,11 +52,11 @@ func NewConfig(path string) (*Config, error) {
 
 	var buf bytes.Buffer
 	if err = t.Execute(&buf, env); err != nil {
-		log.Fatalf("failed to execute config file: %s", err.Error())
+		return nil, err
 	}
 
 	if err = yaml.Unmarshal(buf.Bytes(), &config); err != nil {
-		log.Fatalf("failed to unmarshal config file: %s", err.Error())
+		return nil, err
 	}
 
 	return config, nil

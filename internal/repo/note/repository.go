@@ -118,9 +118,9 @@ func (r *repository) GetList(ctx context.Context, query string, limit uint64, of
 	return serviceNotes, nil
 }
 
-func (r *repository) Update(ctx context.Context, note *model.Note) error {
+func (r *repository) Update(ctx context.Context, id uint64, note *model.Note) error {
 	repoNote := converter.ToRepoNote(note)
-	builder := sq.Update(tableName).Where(sq.Eq{"id": note.ID}).Set("updated_at", time.Now().UTC()).PlaceholderFormat(sq.Dollar)
+	builder := sq.Update(tableName).Where(sq.Eq{"id": id}).Set("updated_at", time.Now().UTC()).PlaceholderFormat(sq.Dollar)
 
 	if repoNote.NoteInfo.Title.Valid {
 		builder = builder.Set("title", repoNote.NoteInfo.Title)
