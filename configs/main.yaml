@@ -1,0 +1,9 @@
+db:
+  dsn: "{{ .DB_DSN }}"
+  max_connections: 10
+http:
+  host: "{{ .HTTP_HOST }}"
+  port: "{{ .HTTP_PORT }}"
+grpc:
+  host: "{{ .GRPC_HOST }}"
+  port: "{{ .GRPC_PORT }}"

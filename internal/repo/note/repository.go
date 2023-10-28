@@ -2,39 +2,36 @@ package note
 
 import (
 	"context"
+	"errors"
 	"time"
 
-	"github.com/Din4EE/note-service-api/internal/config"
+	"github.com/Din4EE/note-service-api/internal/pkg/db"
 	"github.com/Din4EE/note-service-api/internal/repo"
 	"github.com/Din4EE/note-service-api/internal/repo/converter"
 	repoModel "github.com/Din4EE/note-service-api/internal/repo/model"
 	"github.com/Din4EE/note-service-api/internal/service/model"
 	sq "github.com/Masterminds/squirrel"
 	_ "github.com/jackc/pgx/stdlib"
-	"github.com/jmoiron/sqlx"
 )
 
 type repository struct {
-	db *sqlx.DB
+	client db.Client
 }
 
-func NewRepository(cfg config.PgConfig) repo.NoteRepository {
-	db, err := sqlx.Connect("pgx", cfg.DSN)
-	if err != nil {
-		panic(err)
-	}
-
+func NewRepository(db db.Client) repo.NoteRepository {
 	return &repository{
-		db: db,
+		client: db,
 	}
 }
+
+const tableName = "note"
 
 func (r *repository) Create(ctx context.Context, note *model.Note) (uint64, error) {
-	repoNote := converter.ServiceNoteToRepoNote(note)
-	builder := sq.Insert("note").
+	repoNote := converter.ToRepoNote(note)
+	builder := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns("title", "text", "author", "email").
-		Values(repoNote.Title, repoNote.Text, repoNote.Author, repoNote.Email).
+		Values(repoNote.NoteInfo.Title, repoNote.NoteInfo.Text, repoNote.NoteInfo.Author, repoNote.NoteInfo.Email).
 		Suffix("returning id")
 
 	dbQuery, args, err := builder.ToSql()
@@ -42,7 +39,10 @@ func (r *repository) Create(ctx context.Context, note *model.Note) (uint64, erro
 		return 0, err
 	}
 
-	row, err := r.db.QueryContext(ctx, dbQuery, args...)
+	row, err := r.client.DB().QueryContext(ctx, db.Query{
+		Name:     "CreateNote",
+		QueryRaw: dbQuery,
+	}, args...)
 	if err != nil {
 		return 0, err
 	}
@@ -60,7 +60,7 @@ func (r *repository) Create(ctx context.Context, note *model.Note) (uint64, erro
 
 func (r *repository) Get(ctx context.Context, id uint64) (*model.Note, error) {
 	builder := sq.Select("id", "title", "text", "author", "email", "created_at", "updated_at").
-		From("note").
+		From(tableName).
 		Where(sq.Eq{"id": id}).PlaceholderFormat(sq.Dollar)
 
 	dbQuery, args, err := builder.ToSql()
@@ -68,19 +68,21 @@ func (r *repository) Get(ctx context.Context, id uint64) (*model.Note, error) {
 		return nil, err
 	}
 
-	row := r.db.QueryRowxContext(ctx, dbQuery, args...)
 	note := &repoModel.Note{}
-	err = row.Scan(&note.ID, &note.Title, &note.Text, &note.Author, &note.Email, &note.CreatedAt, &note.UpdatedAt)
+	err = r.client.DB().GetContext(ctx, note, db.Query{
+		Name:     "GetNote",
+		QueryRaw: dbQuery,
+	}, args...)
 	if err != nil {
 		return nil, err
 	}
 
-	return converter.RepoNoteToServiceNote(note), nil
+	return converter.ToServiceNote(note), nil
 }
 
 func (r *repository) GetList(ctx context.Context, query string, limit uint64, offset uint64) ([]*model.Note, error) {
 	builder := sq.Select("id", "title", "text", "author", "email", "created_at", "updated_at").
-		From("note").
+		From(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Limit(limit).
 		Offset(offset).
@@ -99,66 +101,76 @@ func (r *repository) GetList(ctx context.Context, query string, limit uint64, of
 		return nil, err
 	}
 
-	rows, err := r.db.QueryxContext(ctx, dbQuery, args...)
+	var notes []*repoModel.Note
+	var serviceNotes []*model.Note
+	err = r.client.DB().SelectContext(ctx, &notes, db.Query{
+		Name:     "GetNoteList",
+		QueryRaw: dbQuery,
+	}, args...)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	var notes []*model.Note
-	for rows.Next() {
-		note := &repoModel.Note{}
-		err = rows.Scan(&note.ID, &note.Title, &note.Text, &note.Author, &note.Email, &note.CreatedAt, &note.UpdatedAt)
-		if err != nil {
-			return nil, err
-		}
-		notes = append(notes, converter.RepoNoteToServiceNote(note))
+	for _, note := range notes {
+		serviceNotes = append(serviceNotes, converter.ToServiceNote(note))
 	}
 
-	return notes, nil
+	return serviceNotes, nil
 }
 
-func (r *repository) Update(ctx context.Context, note *model.Note) error {
-	repoNote := converter.ServiceNoteToRepoNote(note)
-	builder := sq.Update("note").Where(sq.Eq{"id": note.ID}).Set("updated_at", time.Now().UTC()).PlaceholderFormat(sq.Dollar)
+func (r *repository) Update(ctx context.Context, id uint64, note *model.NoteInfoUpdate) error {
+	repoNote := converter.ToRepoNoteFromUpdate(note)
+	builder := sq.Update(tableName).Where(sq.Eq{"id": id}).Set("updated_at", time.Now().UTC()).PlaceholderFormat(sq.Dollar)
 
-	if repoNote.Title.Valid {
-		builder = builder.Set("title", repoNote.Title)
+	if repoNote.NoteInfo.Title.Valid {
+		builder = builder.Set("title", repoNote.NoteInfo.Title)
 	}
-	if repoNote.Text.Valid {
-		builder = builder.Set("text", repoNote.Text)
+	if repoNote.NoteInfo.Text.Valid {
+		builder = builder.Set("text", repoNote.NoteInfo.Text)
 	}
-	if repoNote.Author.Valid {
-		builder = builder.Set("author", repoNote.Author)
+	if repoNote.NoteInfo.Author.Valid {
+		builder = builder.Set("author", repoNote.NoteInfo.Author)
 	}
-	if repoNote.Email.Valid {
-		builder = builder.Set("email", repoNote.Email)
+	if repoNote.NoteInfo.Email.Valid {
+		builder = builder.Set("email", repoNote.NoteInfo.Email)
 	}
-
-	query, args, err := builder.ToSql()
-	if err != nil {
-		return err
-	}
-
-	_, err = r.db.ExecContext(ctx, query, args...)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (r *repository) Delete(ctx context.Context, id uint64) error {
-	builder := sq.Delete("note").PlaceholderFormat(sq.Dollar).Where(sq.Eq{"id": id})
 
 	dbQuery, args, err := builder.ToSql()
 	if err != nil {
 		return err
 	}
 
-	_, err = r.db.ExecContext(ctx, dbQuery, args...)
+	res, err := r.client.DB().ExecContext(ctx, db.Query{
+		Name:     "UpdateNote",
+		QueryRaw: dbQuery,
+	}, args...)
 	if err != nil {
 		return err
+	}
+	if count := res.RowsAffected(); count == 0 {
+		return errors.New("id not found")
+	}
+
+	return nil
+}
+
+func (r *repository) Delete(ctx context.Context, id uint64) error {
+	builder := sq.Delete(tableName).PlaceholderFormat(sq.Dollar).Where(sq.Eq{"id": id})
+
+	dbQuery, args, err := builder.ToSql()
+	if err != nil {
+		return err
+	}
+
+	res, err := r.client.DB().ExecContext(ctx, db.Query{
+		Name:     "DeleteNote",
+		QueryRaw: dbQuery,
+	}, args...)
+	if err != nil {
+		return err
+	}
+	if count := res.RowsAffected(); count == 0 {
+		return errors.New("id not found")
 	}
 
 	return nil
