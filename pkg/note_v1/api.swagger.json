@@ -187,17 +187,8 @@
     "note_v1CreateRequest": {
       "type": "object",
       "properties": {
-        "title": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string"
-        },
-        "author": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
+        "info": {
+          "$ref": "#/definitions/note_v1NoteInfo"
         }
       }
     },
@@ -236,17 +227,8 @@
           "type": "string",
           "format": "uint64"
         },
-        "title": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string"
-        },
-        "author": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
+        "info": {
+          "$ref": "#/definitions/note_v1NoteInfo"
         },
         "created_at": {
           "type": "string",
@@ -258,13 +240,9 @@
         }
       }
     },
-    "note_v1UpdateRequest": {
+    "note_v1NoteInfo": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "uint64"
-        },
         "title": {
           "type": "string"
         },
@@ -276,6 +254,35 @@
         },
         "email": {
           "type": "string"
+        }
+      }
+    },
+    "note_v1UpdateNoteInfo": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "note_v1UpdateRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "info": {
+          "$ref": "#/definitions/note_v1UpdateNoteInfo"
         }
       }
     },

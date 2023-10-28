@@ -40,21 +40,57 @@ service NoteService {
   }
 }
 
+message NoteInfo {
+  string title = 1 [
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
+    (validate.rules).string.min_len = 3,
+    (validate.rules).string.max_len = 255
+  ];
+  string text = 2 [
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
+    (validate.rules).string.min_len = 3,
+    (validate.rules).string.max_len = 255
+    ];
+  string author = 3 [
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
+    (validate.rules).string.min_len = 3,
+    (validate.rules).string.max_len = 255
+  ];
+  string email = 4 [
+    (validate.rules).string.email = true,
+    (validate.rules).string.min_len = 3,
+    (validate.rules).string.max_len = 255
+  ];
+}
+
+message UpdateNoteInfo {
+  google.protobuf.StringValue title = 1 [
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
+    (validate.rules).string.max_len = 255
+  ];
+  google.protobuf.StringValue text = 2 [
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
+    (validate.rules).string.max_len = 255
+  ];
+  google.protobuf.StringValue author = 3 [
+    (validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$",
+    (validate.rules).string.max_len = 255
+  ];
+  google.protobuf.StringValue email = 4 [
+    (validate.rules).string.email = true,
+    (validate.rules).string.max_len = 255
+  ];
+}
+
 message Note {
   uint64 id = 1;
-  string title = 2;
-  string text = 3;
-  string author = 4;
-  string email = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
+  NoteInfo info = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
 }
 
 message CreateRequest {
-  string title = 1 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
-  string text = 2 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
-  string author = 3 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
-  string email = 4 [(validate.rules).string.email = true];
+  NoteInfo info = 1 [(validate.rules).message.required = true];
 }
 
 message CreateResponse {
@@ -81,10 +117,7 @@ message GetListResponse {
 
 message UpdateRequest {
   uint64 id = 1 [(validate.rules).uint64.gt = 0];
-  google.protobuf.StringValue title = 2 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
-  google.protobuf.StringValue text = 3 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
-  google.protobuf.StringValue author = 4 [(validate.rules).string.pattern = "^[a-zA-Z0-9_ ]*$"];
-  google.protobuf.StringValue email = 5 [(validate.rules).string.email = true];
+  UpdateNoteInfo info = 2 [(validate.rules).message.required = true];
 }
 
 message DeleteRequest {

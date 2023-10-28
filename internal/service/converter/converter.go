@@ -6,23 +6,45 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func DescNoteToServiceNote(descNote *desc.Note) *model.Note {
+func ToServiceNote(info *desc.NoteInfo) *model.Note {
 	return &model.Note{
-		ID:     descNote.Id,
-		Title:  &descNote.Title,
-		Text:   &descNote.Text,
-		Author: &descNote.Author,
-		Email:  &descNote.Email,
+		NoteInfo: &model.NoteInfo{
+			Title:  info.GetTitle(),
+			Text:   info.GetText(),
+			Author: info.GetAuthor(),
+			Email:  info.GetEmail(),
+		},
 	}
 }
 
-func ServiceNoteToDescNote(serviceNote *model.Note) *desc.Note {
+func ToServiceNoteFromUpdate(info *desc.UpdateNoteInfo) *model.NoteInfoUpdate {
+	note := &model.NoteInfoUpdate{}
+
+	if info.GetTitle() != nil {
+		note.Title = &info.GetTitle().Value
+	}
+	if info.GetText() != nil {
+		note.Text = &info.GetText().Value
+	}
+	if info.GetAuthor() != nil {
+		note.Author = &info.GetAuthor().Value
+	}
+	if info.GetEmail() != nil {
+		note.Email = &info.GetEmail().Value
+	}
+
+	return note
+}
+
+func ToDescNote(serviceNote *model.Note) *desc.Note {
 	note := &desc.Note{
-		Id:        serviceNote.ID,
-		Title:     *serviceNote.Title,
-		Text:      *serviceNote.Text,
-		Author:    *serviceNote.Author,
-		Email:     *serviceNote.Email,
+		Id: serviceNote.ID,
+		Info: &desc.NoteInfo{
+			Title:  serviceNote.NoteInfo.Title,
+			Text:   serviceNote.NoteInfo.Text,
+			Author: serviceNote.NoteInfo.Author,
+			Email:  serviceNote.NoteInfo.Email,
+		},
 		CreatedAt: timestamppb.New(serviceNote.CreatedAt),
 	}
 

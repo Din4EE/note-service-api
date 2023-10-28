@@ -15,7 +15,7 @@ func (n *Note) GetList(ctx context.Context, req *desc.GetListRequest) (*desc.Get
 
 	protoNotes := make([]*desc.Note, 0, len(notes))
 	for _, note := range notes {
-		protoNotes = append(protoNotes, converter.ServiceNoteToDescNote(note))
+		protoNotes = append(protoNotes, converter.ToDescNote(note))
 	}
 
 	return &desc.GetListResponse{
