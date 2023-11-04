@@ -3,7 +3,6 @@ package note_v1
 import (
 	"context"
 	"errors"
-	"reflect"
 	"testing"
 
 	noteMocks "github.com/Din4EE/note-service-api/internal/repo/mocks"
@@ -42,8 +41,7 @@ func TestNoteGetList(t *testing.T) {
 		setupMock   func()
 		input       *desc.GetListRequest
 		expectedRes *desc.GetListResponse
-		expectError bool
-		errorText   string
+		expectError error
 	}{
 		{
 			desc: "Valid request",
@@ -115,8 +113,7 @@ func TestNoteGetList(t *testing.T) {
 				Limit:       limit,
 				Offset:      offset,
 			},
-			expectError: true,
-			errorText:   errorText,
+			expectError: errors.New(errorText),
 		},
 		{
 			desc: "Empty result",
@@ -140,14 +137,8 @@ func TestNoteGetList(t *testing.T) {
 
 			res, err := api.GetList(ctx, tc.input)
 
-			if tc.expectError {
-				require.Error(t, err)
-				require.Equal(t, tc.errorText, err.Error())
-				return
-			}
-
-			require.NoError(t, err)
-			require.True(t, reflect.DeepEqual(tc.expectedRes, res))
+			require.Equalf(t, tc.expectError, err, "want: %v, got: %v", tc.expectError, err)
+			require.Equalf(t, tc.expectedRes, res, "want: %v, got: %v", tc.expectedRes, res)
 		})
 	}
 }

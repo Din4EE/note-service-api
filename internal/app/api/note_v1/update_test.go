@@ -37,8 +37,7 @@ func TestNoteUpdate(t *testing.T) {
 		setupMock   func()
 		input       *desc.UpdateRequest
 		expectedRes *emptypb.Empty
-		expectError bool
-		errorText   string
+		expectError error
 	}{
 		{
 			desc: "Valid request",
@@ -97,8 +96,7 @@ func TestNoteUpdate(t *testing.T) {
 					Text:  wrapperspb.String(text),
 				},
 			},
-			expectError: true,
-			errorText:   errorText,
+			expectError: errors.New(errorText),
 		},
 		{
 			desc: "Id not found",
@@ -115,8 +113,7 @@ func TestNoteUpdate(t *testing.T) {
 					Text:  wrapperspb.String(text),
 				},
 			},
-			expectError: true,
-			errorText:   errorText,
+			expectError: errors.New(errorText),
 		},
 	}
 
@@ -126,14 +123,8 @@ func TestNoteUpdate(t *testing.T) {
 
 			res, err := api.Update(ctx, tc.input)
 
-			if tc.expectError {
-				require.Error(t, err)
-				require.Equal(t, tc.errorText, err.Error())
-				return
-			}
-
-			require.NoError(t, err)
-			require.Equal(t, tc.expectedRes, res)
+			require.Equalf(t, tc.expectError, err, "want: %v, got: %v", tc.expectError, err)
+			require.Equalf(t, tc.expectedRes, res, "want: %v, got: %v", tc.expectedRes, res)
 		})
 	}
 }
