@@ -35,8 +35,7 @@ func TestNoteCreate(t *testing.T) {
 		setupMock   func()
 		input       *desc.CreateRequest
 		expectedRes *desc.CreateResponse
-		expectError bool
-		errorText   string
+		expectError error
 	}{
 		{
 			desc: "Valid request",
@@ -80,8 +79,7 @@ func TestNoteCreate(t *testing.T) {
 					Email:  email,
 				},
 			},
-			expectError: true,
-			errorText:   errorText,
+			expectError: errors.New(errorText),
 		},
 		{
 			desc: "Empty request",
@@ -103,14 +101,8 @@ func TestNoteCreate(t *testing.T) {
 
 			res, err := api.Create(ctx, tc.input)
 
-			if tc.expectError {
-				require.Error(t, err)
-				require.Equal(t, tc.errorText, err.Error())
-				return
-			}
-
-			require.NoError(t, err)
-			require.Equal(t, tc.expectedRes, res)
+			require.Equalf(t, tc.expectError, err, "want: %v, got: %v", tc.expectError, err)
+			require.Equalf(t, tc.expectedRes, res, "want: %v, got: %v", tc.expectedRes, res)
 		})
 	}
 }

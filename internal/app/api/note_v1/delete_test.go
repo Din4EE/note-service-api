@@ -31,8 +31,7 @@ func TestNoteDelete(t *testing.T) {
 		setupMock   func()
 		input       *desc.DeleteRequest
 		expectedRes *emptypb.Empty
-		expectError bool
-		errorText   string
+		expectError error
 	}{
 		{
 			desc: "Valid request",
@@ -52,8 +51,7 @@ func TestNoteDelete(t *testing.T) {
 			input: &desc.DeleteRequest{
 				Id: 1,
 			},
-			expectError: true,
-			errorText:   errorText,
+			expectError: errors.New(errorText),
 		},
 		{
 			desc: "Id not found",
@@ -63,8 +61,7 @@ func TestNoteDelete(t *testing.T) {
 			input: &desc.DeleteRequest{
 				Id: fakeId,
 			},
-			expectError: true,
-			errorText:   errorText,
+			expectError: errors.New(errorText),
 		},
 	}
 
@@ -73,15 +70,8 @@ func TestNoteDelete(t *testing.T) {
 			tc.setupMock()
 
 			res, err := api.Delete(ctx, tc.input)
-
-			if tc.expectError {
-				require.Error(t, err)
-				require.Equal(t, tc.errorText, err.Error())
-				return
-			}
-
-			require.NoError(t, err)
-			require.Equal(t, tc.expectedRes, res)
+			require.Equalf(t, tc.expectError, err, "want: %v, got: %v", tc.expectError, err)
+			require.Equalf(t, tc.expectedRes, res, "want: %v, got: %v", tc.expectedRes, res)
 		})
 	}
 }
