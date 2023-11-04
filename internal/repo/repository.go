@@ -1,5 +1,7 @@
 package repo
 
+//go:generate mockgen --build_flags=--mod=mod -destination=mocks/mock_note_repository.go -package=mocks . NoteRepository
+
 import (
 	"context"
 

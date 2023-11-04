@@ -43,3 +43,7 @@ vendor-proto:
 	$(call set_protocs,envoyproxy/validate,https://github.com/envoyproxy/protoc-gen-validate,validate,envoyproxy/validate)
 	$(call set_protocs,google/protobuf,https://github.com/protocolbuffers/protobuf,src/google/protobuf,google/protobuf)
 	@rm -rf temp-*
+
+.PHONY: test-coverage
+test-coverage:
+	go test ./... -coverprofile=coverage.out && go tool cover -html=coverage.out
