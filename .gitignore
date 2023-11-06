@@ -1,3 +1,4 @@
 .idea
 /vendor-proto/
 coverage.out
+.env
